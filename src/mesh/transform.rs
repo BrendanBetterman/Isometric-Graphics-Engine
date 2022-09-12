@@ -43,13 +43,12 @@ pub fn rotate(mesh:& ArrayBase<OwnedRepr<f64>, Dim<[usize;2]>>,angle:[f64;3])->A
     _tmp = rotate_y(&_tmp, angle[1]);
     return rotate_z(&_tmp, angle[2]);
 }
-//Transforms the mesh on the 3 different axises.
-/*pub fn transform(mesh:& ArrayBase<OwnedRepr<f32>, Dim<[usize;2]>>,axis:&[f32;3])->ArrayBase<OwnedRepr<f32>, Dim<[usize;2]>>{
+///Transforms the mesh on the 3 different axises.
+pub fn transform(mesh:& ArrayBase<OwnedRepr<f64>, Dim<[usize;2]>>,axis:&[f64;3])->ArrayBase<OwnedRepr<f64>, Dim<[usize;2]>>{
     let tmp = arr2(&[
-        [axis[0],0.0,0.0],
-        [0.0,axis[1],0.0],
-        [0.0,0.0,axis[2]]
+        [axis[0],
+        axis[1],
+        axis[2]]
     ]);
-    
-    return &mesh + &tmp;
-}*/
+    return mesh + tmp;
+}
