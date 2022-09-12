@@ -1,4 +1,7 @@
 use ndarray::*;
+use std::fs::File;
+use std::io::{self, BufRead, BufReader, Lines};
+use std::path::Path;
 //sets input mesh to a cubes mesh
 pub fn get_cube(transform:[f64;3],size:[f64;3])->ArrayBase<OwnedRepr<f64>,Dim<[usize;2]>>{
     let s = [size[0]/2.0,size[1]/2.0,size[2]/2.0];//size in half so model is centered
@@ -37,3 +40,36 @@ pub fn get_cube_triangles()->[[usize;3];12]{
             ];
     return tri;
 }
+pub fn get_obj(dir:&str,triangles:&mut [[usize;3]],mesh: &mut ArrayBase<OwnedRepr<f64>,Dim<[usize;2]>>,normals: &mut [[i32;3]]){
+
+    //let filename = "../../../".to_owned()+dir;
+  
+    // Open the file in read-only mode (ignoring errors).
+    let file = File::open(dir).unwrap();
+    let reader = BufReader::new(file);
+    let mut verticies:Vec<[f64;3]> = Vec::new();
+    let mut face:Vec<[usize;3]> = Vec::new();
+    // Read the file line by line using the lines() iterator from std::io::BufRead.
+    for (index, line) in reader.lines().enumerate() {
+        let line = line.unwrap(); // Ignore errors.
+        let data:Vec<&str> = line.split(" ").collect();
+        if data[0] =="v"{
+            let tmp_vert = [data[1].parse::<f64>().unwrap(),data[2].parse::<f64>().unwrap(),data[3].parse::<f64>().unwrap()];
+            verticies.push(tmp_vert);
+        }else if data[0] == "f"{
+            let tmp_1:Vec<&str> = data[1].split('/').collect();
+            let tmp_2:Vec<&str> = data[2].split('/').collect();
+            let tmp_3:Vec<&str> = data[3].split('/').collect();
+            let tmp_face:[usize;3] = [
+                tmp_1[0].parse::<usize>().unwrap(),
+                tmp_2[0].parse::<usize>().unwrap(),
+                tmp_3[0].parse::<usize>().unwrap()];
+            face.push(tmp_face);
+        }
+        // Show the line and its number.
+        println!("{}. {}", index + 1, line);
+    }
+    println!("{:?}",verticies);
+    println!("{:?}",face);
+}
+

@@ -17,6 +17,10 @@ fn main() {
         let mut rot = 0.01;
         let mut projection2 = mesh::transform::iso_projection(&cube2, 1.0);
         println!("helolo");
+        let mut triangles:[[usize;3];12] = [[0;3];12];
+        let mut mesh = cube.clone(); 
+        let mut normals:[[i32;3];12] =[[0;3];12];;
+        mesh::model::get_obj("cube.obj", &mut triangles, &mut mesh, &mut normals);
         while let Some(e) = window.next() {
             
             //rotate every frame for visuals
