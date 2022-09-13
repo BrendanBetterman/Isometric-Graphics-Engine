@@ -2,10 +2,10 @@ use ndarray::{ArrayBase,OwnedRepr,Dim};
 use std::cmp::Ordering;
 
 pub fn get_polygons(poly_vec:&mut Vec<[[f64;2];3]>,projection:& ArrayBase<OwnedRepr<f64>, Dim<[usize;2]>>,triangles:&[[usize;3]] ){
-    let mut last_avg = 0.0;
+    //let mut last_avg = 0.0;
     let mut tmp_vec:Vec<[[f64;3];3]> = Vec::new();
     for i in triangles{
-        let avg = projection[[i[0],2]] + projection[[i[1],2]] + projection[[i[2],2]];
+        //let avg = projection[[i[0],2]] + projection[[i[1],2]] + projection[[i[2],2]];
         //if avg > last_avg{
             tmp_vec.push([
                 [projection[[i[0],0]] as f64+256.0,projection[[i[0],1]] as f64+256.0,projection[[i[0],2]] as f64],
@@ -39,6 +39,7 @@ pub fn get_polygons(poly_vec:&mut Vec<[[f64;2];3]>,projection:& ArrayBase<OwnedR
         );
     }
 }
+/*
 fn is_normal_visable(projection:& ArrayBase<OwnedRepr<f64>, Dim<[usize;2]>>,triangle:&[usize;3])->bool{
     let index:usize = 2;
     return (projection[[triangle[1],index]] - projection[[triangle[0],index]]) * (projection[[triangle[2],index]] - projection[[triangle[0],index]]) >=0.0;
@@ -54,4 +55,4 @@ pub fn get_poly_normals(normal_vec:&mut Vec<[f64;3]>,projection:& ArrayBase<Owne
     for i in triangles{
         normal_vec.push(normal(projection,i));
     }
-}
+}*/

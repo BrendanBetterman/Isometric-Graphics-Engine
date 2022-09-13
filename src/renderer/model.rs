@@ -1,7 +1,7 @@
 use ndarray::*;
 use std::fs::File;
-use std::io::{self, BufRead, BufReader, Lines};
-use std::path::Path;
+use std::io::{BufRead, BufReader};
+
 //sets input mesh to a cubes mesh
 pub fn get_cube(transform:[f64;3],size:[f64;3])->ArrayBase<OwnedRepr<f64>,Dim<[usize;2]>>{
     let s = [size[0]/2.0,size[1]/2.0,size[2]/2.0];//size in half so model is centered
@@ -40,7 +40,7 @@ pub fn get_cube_triangles()->[[usize;3];12]{
             ];
     return tri;
 }
-pub fn get_obj(dir:&str,triangles:&mut [[usize;3]],mesh: &mut ArrayBase<OwnedRepr<f64>,Dim<[usize;2]>>,normals: &mut [[i32;3]]){
+pub fn get_obj(dir:&str,triangles:&mut [[usize;3]],normals: &mut [[i32;3]]){//->ArrayBase<OwnedRepr<f64>,Dim<[usize;2]>>
 
     //let filename = "../../../".to_owned()+dir;
   
@@ -49,6 +49,7 @@ pub fn get_obj(dir:&str,triangles:&mut [[usize;3]],mesh: &mut ArrayBase<OwnedRep
     let reader = BufReader::new(file);
     let mut verticies:Vec<[f64;3]> = Vec::new();
     let mut face:Vec<[usize;3]> = Vec::new();
+    let mut norm:Vec<[i32;3]> = Vec::new();
     // Read the file line by line using the lines() iterator from std::io::BufRead.
     for (index, line) in reader.lines().enumerate() {
         let line = line.unwrap(); // Ignore errors.
@@ -64,12 +65,26 @@ pub fn get_obj(dir:&str,triangles:&mut [[usize;3]],mesh: &mut ArrayBase<OwnedRep
                 tmp_1[0].parse::<usize>().unwrap(),
                 tmp_2[0].parse::<usize>().unwrap(),
                 tmp_3[0].parse::<usize>().unwrap()];
+            //these are the locations of normals not the normals
+            let tmp_normal:[i32;3] = [
+                tmp_1[2].parse::<i32>().unwrap(),
+                tmp_2[2].parse::<i32>().unwrap(),
+                tmp_3[2].parse::<i32>().unwrap()];
             face.push(tmp_face);
+            norm.push(tmp_normal);
         }
         // Show the line and its number.
         println!("{}. {}", index + 1, line);
     }
+    let mut index = 0;
+    for tri in face{
+        triangles[index] = tri;
+        index +=1;
+    }
+    
+    
     println!("{:?}",verticies);
-    println!("{:?}",face);
+    
+  
 }
 
