@@ -9,6 +9,17 @@ pub fn iso_projection(mesh:& ArrayBase<OwnedRepr<f64>, Dim<[usize;2]>>,scale:f64
         ]);
         return mesh.dot(&iso);
 }
+pub fn iso_vec_projection(mesh:&mut Vec<ArrayBase<OwnedRepr<f64>, Dim<[usize;2]>>>,scale:f64){
+    //convert 3d to 2d with scale
+    let iso = arr2(&[
+        [scale,0.0,0.0],
+        [0.0,scale,0.0],
+        [0.0,0.0,scale]
+    ]);
+    for i in 0..mesh.len(){
+        mesh[i] = mesh[i].dot(&iso);
+    }
+}
 ///Rotates the X axis of the mesh.
 pub fn rotate_x(mesh:& ArrayBase<OwnedRepr<f64>, Dim<[usize;2]>>,angle:f64)->ArrayBase<OwnedRepr<f64>, Dim<[usize;2]>>{
     let rot = arr2(&[

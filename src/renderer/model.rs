@@ -15,6 +15,30 @@ pub fn get_cube(transform:[f64;3],size:[f64;3])->ArrayBase<OwnedRepr<f64>,Dim<[u
         [transform[0]-s[0],transform[1]+s[1],transform[2]-s[2]],
         [transform[0]+s[0],transform[1]+s[1],transform[2]-s[2]]]);
 }
+pub fn get_vec_cube(transform:[f64;3],size:[f64;3])->Vec<ArrayBase<OwnedRepr<f64>,Dim<[usize;2]>>>{
+    let mut vec_cube:Vec<ArrayBase<OwnedRepr<f64>,Dim<[usize;2]>>> = Vec::new();
+    let s = [size[0]/2.0,size[1]/2.0,size[2]/2.0];//size in half so model is centered
+    for i in 0..8{
+        let mut tmp_vert:[f64;3] = [0.0;3];
+        if i%2 ==0 {
+            tmp_vert[0] = transform[0]-s[0];
+        }else{
+            tmp_vert[0] = transform[0]+s[0];
+        }
+        if i%4 <=1{
+            tmp_vert[1] = transform[1]-s[1];
+        }else{
+            tmp_vert[1] = transform[1]+s[1];
+        }
+        if i <=3{
+            tmp_vert[2] = transform[2]-s[2];
+        }else{
+            tmp_vert[2] = transform[2]+s[2];
+        }
+        vec_cube.push(arr2(&[tmp_vert]));
+    }
+    return vec_cube;
+}
 pub fn get_cube_triangles()->[[usize;3];12]{
     let tri:[[usize;3];12] = [
             //bottom
@@ -40,14 +64,14 @@ pub fn get_cube_triangles()->[[usize;3];12]{
             ];
     return tri;
 }
-pub fn get_obj(dir:&str,triangles:&mut [[usize;3]],normals: &mut [[i32;3]]){//->ArrayBase<OwnedRepr<f64>,Dim<[usize;2]>>
+pub fn get_obj(verticies:&mut Vec<ArrayBase<OwnedRepr<f64>,Dim<[usize;2]>>>,dir:&str,triangles:&mut Vec<[usize;3]>){//->ArrayBase<OwnedRepr<f64>,Dim<[usize;2]>>
 
     //let filename = "../../../".to_owned()+dir;
   
     // Open the file in read-only mode (ignoring errors).
     let file = File::open(dir).unwrap();
     let reader = BufReader::new(file);
-    let mut verticies:Vec<[f64;3]> = Vec::new();
+    
     let mut face:Vec<[usize;3]> = Vec::new();
     let mut norm:Vec<[i32;3]> = Vec::new();
     // Read the file line by line using the lines() iterator from std::io::BufRead.
@@ -55,7 +79,7 @@ pub fn get_obj(dir:&str,triangles:&mut [[usize;3]],normals: &mut [[i32;3]]){//->
         let line = line.unwrap(); // Ignore errors.
         let data:Vec<&str> = line.split(" ").collect();
         if data[0] =="v"{
-            let tmp_vert = [data[1].parse::<f64>().unwrap(),data[2].parse::<f64>().unwrap(),data[3].parse::<f64>().unwrap()];
+            let tmp_vert = arr2(&[[data[1].parse::<f64>().unwrap(),data[2].parse::<f64>().unwrap(),data[3].parse::<f64>().unwrap()]]);
             verticies.push(tmp_vert);
         }else if data[0] == "f"{
             let tmp_1:Vec<&str> = data[1].split('/').collect();
@@ -74,17 +98,14 @@ pub fn get_obj(dir:&str,triangles:&mut [[usize;3]],normals: &mut [[i32;3]]){//->
             norm.push(tmp_normal);
         }
         // Show the line and its number.
-        println!("{}. {}", index + 1, line);
+        //println!("{}. {}", index + 1, line);
     }
     let mut index = 0;
     for tri in face{
-        triangles[index] = tri;
+        triangles.push(tri);
         index +=1;
     }
+    //println!("{:?}",verticies); 
+    let obj_size = verticies.len();
     
-    
-    println!("{:?}",verticies);
-    
-  
 }
-
